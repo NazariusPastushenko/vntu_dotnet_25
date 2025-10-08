@@ -2,6 +2,10 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "npastushenko.TaskPlanner", "npastushenko.TaskPlanner\npastushenko.TaskPlanner.csproj", "{619591F4-CCD5-4CDF-A9FD-1F526FA71339}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Models", "Domain.Models\Domain.Models.csproj", "{8FAEA5B5-3745-4FE6-A326-124233E74C44}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Logic", "Domain.Logic\Domain.Logic.csproj", "{EFE702AF-B02C-4AC8-9C2B-CF08481A75E9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +16,13 @@ Global
 		{619591F4-CCD5-4CDF-A9FD-1F526FA71339}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{619591F4-CCD5-4CDF-A9FD-1F526FA71339}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{619591F4-CCD5-4CDF-A9FD-1F526FA71339}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FAEA5B5-3745-4FE6-A326-124233E74C44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FAEA5B5-3745-4FE6-A326-124233E74C44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FAEA5B5-3745-4FE6-A326-124233E74C44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FAEA5B5-3745-4FE6-A326-124233E74C44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EFE702AF-B02C-4AC8-9C2B-CF08481A75E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EFE702AF-B02C-4AC8-9C2B-CF08481A75E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EFE702AF-B02C-4AC8-9C2B-CF08481A75E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EFE702AF-B02C-4AC8-9C2B-CF08481A75E9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
