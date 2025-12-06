@@ -1,15 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using DataAccess.Abstractions;
 using Domain.Model;
+
+namespace Domain.Logic;
 
 public class SimpleTaskPlanner
 {
-    public WorkItem[] CreatePlan(WorkItem[] items)
+    private readonly IWorkItemsRepository _repo;
+
+    public SimpleTaskPlanner(IWorkItemsRepository repo)
     {
-        var itemsAsList = items.ToList();
-        itemsAsList.Sort(CompareWorkItems);
-        return itemsAsList.ToArray();
+        _repo = repo ?? throw new ArgumentNullException(nameof(repo));
+    }
+
+    public WorkItem[] CreatePlan()
+    {
+        var items = _repo.GetAll();
+        
+        return items
+            .OrderBy(i => i.IsCompleted)
+            .ThenBy(i => i.Priority)
+            .ThenBy(i => i.DueDate)
+            .ToArray();
     }
 
     private static int CompareWorkItems(WorkItem firstItem, WorkItem secondItem)

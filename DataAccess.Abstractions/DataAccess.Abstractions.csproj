@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\DataAccess.Abstractions\DataAccess.Abstractions.csproj" />
       <ProjectReference Include="..\Domain.Models\Domain.Models.csproj" />
     </ItemGroup>
 
