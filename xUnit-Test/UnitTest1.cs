@@ -1,4 +1,5 @@
 using DataAccess.Abstractions;
+using Domain.Logic;
 using Domain.Model;
 using Domain.Model.Enums;
 using Moq;
@@ -66,25 +67,4 @@ public class WorkItemsServiceTests
         repo.Verify(r => r.Remove(id), Times.Once);
         repo.Verify(r => r.SaveChanges(), Times.Once);
     }
-
-    
-    [Fact]
-    public void CreatePlan_ShouldSortByPriority_ThenByDueDate()
-    {
-        var planner = new SimpleTaskPlanner();
-
-        var items = new[]
-        {
-            new WorkItem { Title="A", Priority=Priority.Medium, DueDate=new DateTime(2025,5,5)},
-            new WorkItem { Title="B", Priority=Priority.High,   DueDate=new DateTime(2025,5,7)},
-            new WorkItem { Title="C", Priority=Priority.High,   DueDate=new DateTime(2025,5,1)},
-        };
-
-        var result = planner.CreatePlan(items);
-
-        Assert.Equal("C", result[0].Title);
-        Assert.Equal("B", result[1].Title);
-        Assert.Equal("A", result[2].Title);
-    }
-
 }

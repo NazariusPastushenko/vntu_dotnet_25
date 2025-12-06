@@ -5,6 +5,7 @@ using Domain.Model;
 using Domain.Model.Enums;
 using DataAccess;
 using DataAccess.Abstractions;
+using Domain.Logic;
 
 internal static class Program
 {
@@ -111,8 +112,8 @@ internal static class Program
             return;
         }
 
-        var planner = new SimpleTaskPlanner();
-        var sorted = planner.CreatePlan(all);
+        var planner = new SimpleTaskPlanner(repo);
+        var sorted = planner.CreatePlan();
 
         Console.WriteLine("\n=== Sorted plan ===");
         foreach (var item in sorted)

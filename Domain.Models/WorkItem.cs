@@ -30,6 +30,6 @@ public class WorkItem
 
     public override string ToString()
     {
-        return $"{Title}: due {DueDate:dd.MM.yyyy}, {Priority.ToString().ToLower()} priority";
+        return $"{Title}: due {DueDate:dd.MM.yyyy}, {Priority.ToString().ToLower()} priority. Complete: {IsCompleted}";
     }
 }

@@ -56,7 +56,10 @@ public class FileWorkItemsRepository : IWorkItemsRepository
     {
         var array = new List<WorkItem>();
         foreach (var item in _items.Values)
+        {
+            if (item.IsCompleted) continue;
             array.Add(item.Clone());
+        }
 
         return array.ToArray();
     }
