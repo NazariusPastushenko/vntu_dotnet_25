@@ -17,144 +17,180 @@ internal static class Program
 
         while (true)
         {
-            Console.WriteLine("\n===== МЕНЮ =====");
-            Console.WriteLine("1. Показати задачі");
-            Console.WriteLine("2. Додати задачу");
-            Console.WriteLine("3. Видалити задачу");
-            Console.WriteLine("4. Вийти");
-            Console.Write("Ваш вибір: ");
+            Console.WriteLine("\n===== MENU =====");
+            Console.WriteLine("[A] Add work item");
+            Console.WriteLine("[B] Build a plan (show sorted)");
+            Console.WriteLine("[M] Mark work item as completed");
+            Console.WriteLine("[R] Remove a work item");
+            Console.WriteLine("[Q] Quit");
+            Console.Write("Choose: ");
 
-            string choice = Console.ReadLine();
+            string choice = Console.ReadLine().Trim().ToUpper();
 
             switch (choice)
             {
-                case "1":
-                    ShowTasks(repo);
-                    break;
-
-                case "2":
+                case "A":
                     AddTask(repo);
                     break;
 
-                case "3":
+                case "B":
+                    BuildPlan(repo);
+                    break;
+
+                case "M":
+                    MarkCompleted(repo);
+                    break;
+
+                case "R":
                     DeleteTask(repo);
                     break;
 
-                case "4":
+                case "Q":
                     return;
 
                 default:
-                    Console.WriteLine("Невірний вибір.");
+                    Console.WriteLine("Unknown command.");
                     break;
             }
         }
     }
 
-    // 🔥 1. Показати задачі
-    private static void ShowTasks(IWorkItemsRepository repo)
+    // 🔥 A — Add work item
+    private static void AddTask(IWorkItemsRepository repo)
+    {
+        Console.WriteLine("\n=== Create new work item ===");
+
+        Console.Write("Title: ");
+        string title = Console.ReadLine();
+        if (string.IsNullOrWhiteSpace(title))
+        {
+            Console.WriteLine("Canceled.");
+            return;
+        }
+
+        Console.Write("Description: ");
+        string description = Console.ReadLine();
+
+        Console.Write("Creation date (yyyy-MM-dd): ");
+        DateTime creationDate = DateTime.Parse(Console.ReadLine());
+
+        Console.Write("Due date (yyyy-MM-dd): ");
+        DateTime dueDate = DateTime.Parse(Console.ReadLine());
+
+        Console.Write("Priority (Low, Medium, High): ");
+        Priority priority = Enum.Parse<Priority>(Console.ReadLine(), true);
+
+        Console.Write("Complexity (None, Minutes, Hours, Days, Weeks): ");
+        Complexity complexity = Enum.Parse<Complexity>(Console.ReadLine(), true);
+
+        var item = new WorkItem
+        {
+            Title = title,
+            Description = description,
+            CreationDate = creationDate,
+            DueDate = dueDate,
+            Priority = priority,
+            Complexity = complexity,
+            IsCompleted = false
+        };
+
+        Guid id = repo.Add(item);
+        repo.SaveChanges();
+
+        Console.WriteLine($"Added! ID = {id}");
+    }
+
+    // 🔥 B — Build a plan (sort items)
+    private static void BuildPlan(IWorkItemsRepository repo)
     {
         var all = repo.GetAll();
 
         if (all.Length == 0)
         {
-            Console.WriteLine("Список порожній.");
+            Console.WriteLine("No items found.");
             return;
         }
-
-        Console.WriteLine("\n=== Список задач ===");
 
         var planner = new SimpleTaskPlanner();
         var sorted = planner.CreatePlan(all);
 
+        Console.WriteLine("\n=== Sorted plan ===");
         foreach (var item in sorted)
             Console.WriteLine(item);
     }
 
-    // 🔥 2. Додати задачу (твій код майже без змін)
-    private static void AddTask(IWorkItemsRepository repo)
+    // 🔥 M — Mark item as completed
+    private static void MarkCompleted(IWorkItemsRepository repo)
     {
-        Console.WriteLine("\n=== Створення нового завдання ===");
+        var all = repo.GetAll();
 
-        while (true)
+        if (all.Length == 0)
         {
-            Console.Write("Назва (Title): ");
-            string title = Console.ReadLine();
-            if (string.IsNullOrWhiteSpace(title))
-                break;
-
-            Console.Write("Опис (Description): ");
-            string description = Console.ReadLine();
-
-            Console.Write("Дата створення (yyyy-MM-dd): ");
-            DateTime creationDate = DateTime.Parse(Console.ReadLine());
-
-            Console.Write("Кінцева дата (yyyy-MM-dd): ");
-            DateTime dueDate = DateTime.Parse(Console.ReadLine());
-
-            Console.Write("Пріоритет (Low, Medium, High): ");
-            Priority priority = Enum.Parse<Priority>(Console.ReadLine(), true);
-
-            Console.Write("Складність (None, Minutes, Hours, Days, Weeks): ");
-            Complexity complexity = Enum.Parse<Complexity>(Console.ReadLine(), true);
-
-            var item = new WorkItem
-            {
-                Title = title,
-                Description = description,
-                CreationDate = creationDate,
-                DueDate = dueDate,
-                Priority = priority,
-                Complexity = complexity,
-                IsCompleted = false
-            };
-
-            Guid newId = repo.Add(item);
-            repo.SaveChanges();
-
-            Console.WriteLine($"Завдання додано! ID = {newId}\n");
-
-            Console.Write("Додати ще? (y/n): ");
-            if (Console.ReadLine().ToLower() != "y")
-                break;
+            Console.WriteLine("No items available.");
+            return;
         }
+
+        Console.WriteLine("\n=== Mark as completed ===");
+        foreach (var item in all)
+            Console.WriteLine($"{item.Id} — {item.Title} (Completed: {item.IsCompleted})");
+
+        Console.Write("\nEnter ID: ");
+        string idStr = Console.ReadLine();
+
+        if (!Guid.TryParse(idStr, out Guid id))
+        {
+            Console.WriteLine("Invalid ID.");
+            return;
+        }
+
+        var itemToUpdate = repo.Get(id);
+        if (itemToUpdate == null)
+        {
+            Console.WriteLine("Item not found.");
+            return;
+        }
+
+        itemToUpdate.IsCompleted = true;
+        repo.Update(itemToUpdate);
+        repo.SaveChanges();
+
+        Console.WriteLine("Marked as completed!");
     }
 
-    // 🔥 3. Видалити задачу за ID
+    // 🔥 R — Remove work item
     private static void DeleteTask(IWorkItemsRepository repo)
     {
         var all = repo.GetAll();
 
         if (all.Length == 0)
         {
-            Console.WriteLine("Немає задач для видалення.");
+            Console.WriteLine("No items to remove.");
             return;
         }
 
-        Console.WriteLine("\n=== Видалення задачі ===");
-        Console.WriteLine("Список задач:");
-
+        Console.WriteLine("\n=== Remove work item ===");
         foreach (var item in all)
             Console.WriteLine($"{item.Id} — {item.Title}");
 
-        Console.Write("\nВведіть ID задачі для видалення: ");
-        string idString = Console.ReadLine();
+        Console.Write("\nEnter ID: ");
+        string idStr = Console.ReadLine();
 
-        if (!Guid.TryParse(idString, out Guid id))
+        if (!Guid.TryParse(idStr, out Guid id))
         {
-            Console.WriteLine("Невірний формат ID.");
+            Console.WriteLine("Invalid ID.");
             return;
         }
 
-        bool result = repo.Remove(id);
+        bool ok = repo.Remove(id);
 
-        if (result)
+        if (ok)
         {
             repo.SaveChanges();
-            Console.WriteLine("Задачу видалено!");
+            Console.WriteLine("Item removed!");
         }
         else
         {
-            Console.WriteLine("Задачі з таким ID не знайдено.");
+            Console.WriteLine("Item not found.");
         }
     }
 }
